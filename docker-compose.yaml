@@ -1,0 +1,67 @@
+version: '3.7'
+services:
+  apache:
+    build: ops/apache
+    container_name: dly_apache
+    depends_on:
+      - php
+    ports:
+      - '80:80'
+    volumes:
+      - './ops/apache/config/vhosts:/etc/apache2/sites-enabled'
+      - './symfony:/home/wwwroot/symfony'
+
+  php:
+    build: ops/php
+    container_name: dly_php
+    depends_on:
+      - postgres
+    volumes:
+      - './symfony:/home/wwwroot/symfony'
+
+  node:
+    build:
+      context: ./
+      dockerfile: ./ops/node/Dockerfile
+    container_name: dly_node
+    depends_on:
+      - apache
+      - postgres
+    working_dir: /app
+    ports:
+      - '3000:8080'
+    volumes:
+      - './vue:/app'
+      - '/app/node_modules/'
+
+  postgres:
+    image: postgres:11
+    container_name: dly_postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - "postgres:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: dly
+
+  s3:
+    image: minio/minio:latest
+    container_name: dly_s3
+    hostname: s3
+    command:
+      - server
+      - /data
+      - --address
+      - ":7000"
+    env_file: ./ops/minio/.env
+    ports:
+      - 7000:7000
+    volumes:
+      - s3-data:/data
+
+volumes:
+  postgres:
+  s3-data:
