@@ -5,11 +5,11 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -20,16 +20,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
+     * @Groups("user")
      */
     private UuidInterface $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups("user")
      */
     private string $username;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups("user")
      */
     private array $roles = [];
 
@@ -39,8 +42,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @ORM\Column(type="datetime_immutable", nullable=false)
+     * @Groups("user")
      */
     private DateTimeImmutable $createdAt;
 
@@ -48,6 +51,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->id = Uuid::uuid4();
         $this->username = $username;
+
+        $this->createdAt = new \DateTimeImmutable();
     }
 
 
