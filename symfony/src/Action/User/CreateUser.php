@@ -2,6 +2,8 @@
 
 namespace App\Action\User;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class CreateUser
 {
     /**

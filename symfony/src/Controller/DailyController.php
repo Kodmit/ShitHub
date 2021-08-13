@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Action\Daily\CreateDaily;
 use App\Action\User\CreateUser;
+use App\Repository\DailyRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,40 +13,40 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserController extends AbstractController
+class DailyController extends AbstractController
 {
-    private UserRepository $userRepository;
+    private DailyRepository $dailyRepository;
     private MessageBusInterface $commandBus;
 
-    public function __construct(UserRepository $userRepository, MessageBusInterface $commandBus)
+    public function __construct(DailyRepository $dailyRepository, MessageBusInterface $commandBus)
     {
-        $this->userRepository = $userRepository;
+        $this->dailyRepository = $dailyRepository;
         $this->commandBus = $commandBus;
     }
 
     /**
-     * @Route("/users", methods={"GET"})
+     * @Route("/dailys", methods={"GET"})
      */
-    public function getUsers(): JsonResponse
+    public function getDaily(): JsonResponse
     {
         return $this->json(
-            $this->userRepository->findAll(),
+            $this->dailyRepository->findAll(),
             JsonResponse::HTTP_OK,
             [],
-            ['groups' => 'user']
+            ['groups' => ['daily', 'user']]
         );
     }
 
     /**
-     * @Route("/users", methods={"POST"})
+     * @Route("/dailys", methods={"POST"})
      */
-    public function createUser(Request $request): JsonResponse
+    public function createDaily(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        $envelope = $this->commandBus->dispatch(new CreateUser(
-            $data['username'],
-            $data['password']
+        $envelope = $this->commandBus->dispatch(new CreateDaily(
+            $data['userId'],
+            $data['description']
         ));
 
         /** @var HandledStamp $handledStamp */
@@ -54,7 +56,7 @@ class UserController extends AbstractController
             $handledStamp->getResult(),
             JsonResponse::HTTP_CREATED,
             [],
-            ['groups' => 'user']
+            ['groups' => ['daily', 'user']]
         );
     }
 }
