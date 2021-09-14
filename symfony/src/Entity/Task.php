@@ -24,13 +24,6 @@ class Task
     private UuidInterface $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Daily")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups("task")
-     */
-    private Daily $daily;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups("task")
@@ -56,27 +49,26 @@ class Task
     private bool $cancelled;
 
     /**
+     * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime_immutable", nullable=false)
      * @Groups("task")
      */
     private DateTimeImmutable $createdAt;
 
     /**
-     * @Gedmo\Timestampable(on="create")
+     * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime_immutable", nullable=true)
      * @Groups("task")
      */
     private DateTimeImmutable $updatedAt;
 
     public function __construct(
-        Daily $daily,
         User $user,
         string $description,
         bool $isDone = false
     )
     {
         $this->id = Uuid::uuid4();
-        $this->daily = $daily;
         $this->user = $user;
         $this->description = $description;
         $this->done = $isDone;
@@ -84,14 +76,19 @@ class Task
         $this->cancelled = false;
     }
 
+    public function update(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function toggle(bool $isDone): void
+    {
+        $this->done = $isDone;
+    }
+
     public function getId(): UuidInterface
     {
         return $this->id;
-    }
-
-    public function getDaily(): Daily
-    {
-        return $this->daily;
     }
 
     public function getUser(): User

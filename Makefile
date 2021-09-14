@@ -21,6 +21,9 @@ bash: ## Open a bash terminal for Symfony
 ca-cl: ## Clears the symfony cache
 	docker exec dly_php bash -c "cd symfony && php bin/console cache:clear"
 
+npm: ## Install npm dependencies
+	docker exec dly_node sh -c "npm install"
+
 composer-install: ## Install symfony vendors
 	docker exec dly_php bash -c "cd symfony && composer install"
 
