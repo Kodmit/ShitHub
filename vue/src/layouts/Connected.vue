@@ -31,10 +31,6 @@
             <v-sheet class="text-center pa-5" rounded="lg" min-height="268">
               <p>{{ moment().format('LLLL') }}</p>
 
-              <v-btn depressed>
-                Créer un nouveau daily
-              </v-btn>
-
               <v-btn depressed class="mt-5" :to="{name: 'users-create'}">
                 Créer un utilisateur
               </v-btn>

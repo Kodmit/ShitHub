@@ -26,22 +26,32 @@ const routes = [
         {
           path: '/home',
           name: 'home',
-          component: () => import(/* webpackChunkName: "login" */ '@/views/Home.vue')
+          component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue')
         },
         {
           path: '/reports',
           name: 'reports',
-          component: () => import(/* webpackChunkName: "login" */ '@/views/Reports.vue')
+          component: () => import(/* webpackChunkName: "reportes" */ '@/views/Reports.vue')
         },
         {
           path: '/users',
           name: 'users',
-          component: () => import(/* webpackChunkName: "login" */ '@/views/Users.vue')
+          component: () => import(/* webpackChunkName: "users" */ '@/views/Users.vue')
+        },
+        {
+          path: '/users/:id',
+          name: 'users-profile',
+          component: () => import(/* webpackChunkName: "users-profile" */ '@/views/UserProfile.vue')
+        },
+        {
+          path: '/users/:id/edit',
+          name: 'users-edit',
+          component: () => import(/* webpackChunkName: "users-edit" */ '@/views/UserEdit.vue')
         },
         {
           path: '/users/create',
           name: 'users-create',
-          component: () => import(/* webpackChunkName: "login" */ '@/views/UserCreate.vue')
+          component: () => import(/* webpackChunkName: "users-create" */ '@/views/UserCreate.vue')
         }
     ]
   }

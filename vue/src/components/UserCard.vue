@@ -2,12 +2,14 @@
   <v-card max-width="300" outlined>
     
     <v-card-actions>
-      <v-btn color="orange lighten-2" text>
-        <v-icon large left>
-        mdi-account
-      </v-icon>
-      <span class="text-h6 font-weight-light">{{ user.username }}</span>
-      </v-btn>
+      <router-link style="text-decoration: none" :to="{name: 'users-profile', params: {id: user.id}}">
+        <v-btn color="orange lighten-2" text>
+          <v-icon large left>
+          mdi-account
+        </v-icon>
+        <span class="text-h6 font-weight-light">{{ user.username }}</span>
+        </v-btn>
+      </router-link>
 
       <v-spacer></v-spacer>
 

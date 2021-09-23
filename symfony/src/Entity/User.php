@@ -55,6 +55,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->username = $username;
     }
 
+    public function update(string $username): void
+    {
+        $this->username = $username;
+    }
+
     public function getId(): UuidInterface
     {
         return $this->id;

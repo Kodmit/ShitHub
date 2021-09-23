@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Action\User\CreateUser;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -24,7 +25,8 @@ class UserCreateCommand extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Create an user');
+        $this->setDescription('Create an user')
+            ->addArgument('test', InputArgument::OPTIONAL, 'The Business ID');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

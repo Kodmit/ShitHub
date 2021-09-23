@@ -57,8 +57,8 @@ export default {
   methods: {
     toggleDone() {
       this.loading = true;
-this.$store.commit('tasks/removeTask', this.task.id);
-this.toggle = false;
+      this.$store.commit('tasks/removeTask', this.task.id);
+      this.toggle = false;
       axios.patch('/tasks/' + this.task.id, { done: true })
       .then((response) => {
         this.$store.commit('tasks/removeTask', response.data.id);

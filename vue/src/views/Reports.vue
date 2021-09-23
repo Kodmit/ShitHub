@@ -1,10 +1,12 @@
 <template>
 <div>
     <p class="text-h3 dly-cat-title">Rapports</p>
-    Du {{ moment(startDate).format('dddd LL') }} au {{ moment(endDate).format('dddd LL') }}
+    Du <b>{{ moment(startDate).format('dddd LL') }}</b> au <b>{{ moment(endDate).format('dddd LL') }}</b>
 
-    <v-btn depressed @click="removeWeek()">Semaine précédente</v-btn>
-    <v-btn depressed @click="addWeek()">Semaine suivante</v-btn>
+    <section style="float: right">
+      <v-btn depressed @click="removeWeek()" class="mr-5">Semaine précédente</v-btn>
+      <v-btn depressed @click="addWeek()">Semaine suivante</v-btn>
+    </section>
 
     <v-card flat tile class="d-flex justify-space-between mb-6">
 

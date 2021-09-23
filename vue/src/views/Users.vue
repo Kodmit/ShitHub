@@ -21,10 +21,12 @@
             <td>{{ user.username }}</td>
             <td>{{ moment(user.createdAt).format('L') }}</td>
             <td>
-              <v-btn icon color="primary">
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-btn icon color="primary">
+              <router-link style="text-decoration: none" :to="{name: 'users-edit', params: {id: user.id}}">
+                <v-btn icon color="primary">
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+              </router-link>
+              <v-btn icon color="primary" @click="deleteUser(user.id)">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </td>
@@ -38,6 +40,7 @@
 
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'Users',
@@ -52,6 +55,17 @@ export default {
     }).catch(() => {
       console.log('error');
     });
+  },
+  methods: {
+    deleteUser(userId) {
+      axios.delete('/users/' + userId)
+      .then(() => {
+        this.users = this.users.filter(
+            user => user.id !== userId
+        );
+        Swal.fire('Utilisateur supprimé', '', 'success');
+      })
+    }
   }
 }
 </script>

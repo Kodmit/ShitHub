@@ -19,6 +19,7 @@ class UpdateTask
         }
 
         $this->taskId = $taskId;
+        $this->description = $description;
     }
 
     public function getTaskId(): UuidInterface
