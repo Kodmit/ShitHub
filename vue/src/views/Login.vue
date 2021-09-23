@@ -82,7 +82,7 @@ export default {
         password: this.form.password
       }).then((response) => {
         auth.login(response.data.token);
-        this.$router.push({name: 'home'});
+        window.location.replace('/home');
       }).catch(() => {
         this.loading = false;
         this.error = true;
