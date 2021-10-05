@@ -22,8 +22,8 @@ class TaskRepository extends ServiceEntityRepository
 
     public function getTasksAndFilter(
         bool $done = null,
-        DateTimeImmutable $updatedStartDate = null,
-        DateTimeImmutable $updatedEndDate = null
+        DateTimeImmutable $doneStartDate = null,
+        DateTimeImmutable $doneEndDate = null
     ): array
     {
         $qb = $this
@@ -40,23 +40,23 @@ class TaskRepository extends ServiceEntityRepository
             $conditionTriggered = true;
         }
 
-        if (null !== $updatedStartDate) {
+        if (null !== $doneStartDate) {
             if (true === $conditionTriggered) {
-                $qb->andWhere('t.updatedAt > :updatedStartDate');
+                $qb->andWhere('t.doneAt > :doneStartDate');
             } else {
-                $qb->where('t.updatedAt > :updatedStartDate');
+                $qb->where('t.doneAt > :doneStartDate');
             }
-            $qb->setParameter('updatedStartDate', $updatedStartDate->format('Y-m-d H:i:s'));
+            $qb->setParameter('doneStartDate', $doneStartDate->format('Y-m-d H:i:s'));
             $conditionTriggered = true;
         }
 
-        if (null !== $updatedEndDate) {
+        if (null !== $doneEndDate) {
             if (true === $conditionTriggered) {
-                $qb->andWhere('t.updatedAt < :updatedEndDate');
+                $qb->andWhere('t.doneAt < :doneEndDate');
             } else {
-                $qb->where('t.updatedAt < :updatedEndDate');
+                $qb->where('t.doneAt < :doneEndDate');
             }
-            $qb->setParameter('updatedEndDate', $updatedEndDate->format('Y-m-d H:i:s'));
+            $qb->setParameter('doneEndDate', $doneEndDate->format('Y-m-d H:i:s'));
         }
 
         return $qb

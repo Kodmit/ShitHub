@@ -16,7 +16,6 @@
       <v-list-item class="grow">
 
         {{ moment(task.createdAt).fromNow() }}
-        
 
         <v-row justify="end">
           

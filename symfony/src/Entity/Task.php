@@ -49,6 +49,12 @@ class Task
     private bool $cancelled;
 
     /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @Groups("task")
+     */
+    private ?\DateTimeImmutable $doneAt;
+
+    /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime_immutable", nullable=false)
      * @Groups("task")
@@ -74,6 +80,7 @@ class Task
         $this->done = $isDone;
 
         $this->cancelled = false;
+        $this->doneAt = null;
     }
 
     public function update(string $description): void
@@ -81,9 +88,31 @@ class Task
         $this->description = $description;
     }
 
-    public function toggle(bool $isDone): void
+    public function toggle(bool $isDone, \DateTimeImmutable $doneAt = null): void
     {
         $this->done = $isDone;
+
+        if (null !== $doneAt) {
+            $this->doneAt = $doneAt;
+            return;
+        }
+
+        if (false === $isDone) {
+            $this->doneAt = null;
+            return;
+        }
+
+        $doneAt = new \DateTimeImmutable();
+        $day = $doneAt->format('l');
+        $subtract = 'P1D';
+
+        if ('Sunday' === $day) {
+            $subtract = 'P2D';
+        } else if ('Monday' === $day) {
+            $subtract = 'P3D';
+        }
+
+        $this->doneAt = $doneAt->sub(new \DateInterval($subtract));
     }
 
     public function getId(): UuidInterface
@@ -104,6 +133,11 @@ class Task
     public function isDone(): bool
     {
         return $this->done;
+    }
+
+    public function getDoneAt(): ?DateTimeImmutable
+    {
+        return $this->doneAt;
     }
 
     public function isCancelled(): bool

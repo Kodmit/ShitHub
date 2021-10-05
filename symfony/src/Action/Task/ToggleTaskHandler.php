@@ -33,7 +33,7 @@ class ToggleTaskHandler implements MessageHandlerInterface
             ));
         }
 
-        $task->toggle($command->isDone());
+        $task->toggle($command->isDone(), $command->getDoneAt());
         $this->entityManager->flush();
 
         return $task;

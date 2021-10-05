@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto mb-5" color="#0091a2" dark max-width="400">
+  <v-card class="mx-auto mb-5" color="#0091a2" dark max-width="400" @mouseenter="displayNavigation = true" @mouseleave="displayNavigation = false">
 
     <v-progress-linear
       color="orange"
@@ -7,6 +7,36 @@
       reverse
       v-if="loading"
     ></v-progress-linear>
+
+    <section class="dly-navigation-btn" v-if="displayNavigation">
+      <v-btn
+        class="mx-2"
+        fab
+        dark
+        small
+        color="primary"
+        @click="changeDay('left')"
+      >
+        <v-icon dark>
+          mdi-chevron-left
+        </v-icon>
+      </v-btn>
+
+      <v-btn
+        class="mx-2"
+        fab
+        dark
+        small
+        color="primary"
+        style="float: right"
+        @click="changeDay('right')"
+      >
+      
+        <v-icon dark>
+          mdi-chevron-right
+        </v-icon>
+      </v-btn>
+    </section>
 
     <v-card-text class="body-1" style="color: #fff">
       <span style="color: orange; display: block; font-weight: bold" class="mb-1">
@@ -51,6 +81,7 @@ export default {
   data: () => ({
       show: false,
       loading: false,
+      displayNavigation: false,
       isDone: true
 
   }),
@@ -73,7 +104,33 @@ export default {
         this.loading = false;
       })
       
+    },
+    changeDay(direction) {
+      this.loading = true;
+      const doneAt = new Date(this.task.doneAt);
+
+      if (direction === 'left') {
+        var newDate = doneAt.setDate(doneAt.getDate() - 1);
+      } else {
+        var newDate = doneAt.setDate(doneAt.getDate() + 1);
+      }
+
+      axios.patch('/tasks/' + this.task.id, { doneAt: new Date(newDate) })
+      .then((response) => {
+        this.loading = false;
+        this.$store.commit('sumaryTasks/removeTask', response.data.id);
+        this.$store.commit('sumaryTasks/addTask', response.data);
+      })
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.dly-navigation-btn {
+  position: absolute;
+  z-index: 999;
+  margin-top: 10px;
+  width: 100%;
+}
+</style>

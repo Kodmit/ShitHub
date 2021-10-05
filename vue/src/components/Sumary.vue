@@ -72,12 +72,12 @@ export default {
     getMonday(d) {
       d = new Date(d);
       var day = d.getDay(),
-        diff = d.getDate() - day + (day == 0 ? -6 : 1);
+        diff = d.getDate() - day + (day == 0 ? -6 : 1) - 1;
       return new Date(d.setDate(diff));
     },
     getTasksForDay(day) {
         return this.tasks.filter((task) => {
-            const weekDay = new Date(task.updatedAt).toLocaleDateString('en-US', { weekday: 'long'});
+            const weekDay = new Date(task.doneAt).toLocaleDateString('en-US', { weekday: 'long'});
             if (weekDay === day) {
                 return task;
             }

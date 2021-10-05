@@ -110,10 +110,11 @@ class TaskController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (true === isset($data['done'])) {
+        if (true === isset($data['done']) || true === isset($data['doneAt'])) {
             $envelope = $this->commandBus->dispatch(new ToggleTask(
                 $id,
-                $data['done']
+                $data['done'] ?? true,
+                $data['doneAt'] ?? null,
             ));
 
             /** @var HandledStamp $handledStamp */
@@ -124,7 +125,7 @@ class TaskController extends AbstractController
 
         return $this->json(
             $handledStamp->getResult(),
-            JsonResponse::HTTP_CREATED,
+            JsonResponse::HTTP_OK,
             [],
             ['groups' => ['task', 'user']]
         );
