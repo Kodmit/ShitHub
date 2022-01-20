@@ -62,6 +62,11 @@ const routes = [
           path: '/g-auth/redirect-uri',
           name: 'g-auth-redirect-uri',
           component: () => import(/* webpackChunkName: "users-create" */ '@/views/GAuthRedirection.vue')
+        },
+        {
+          path: '/github/redirect-uri',
+          name: 'github-redirect-uri',
+          component: () => import(/* webpackChunkName: "users-create" */ '@/views/GithubRedirection.vue')
         }
     ]
   }
