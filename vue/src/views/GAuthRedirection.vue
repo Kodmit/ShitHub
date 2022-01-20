@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import googleAuth from "@/service/googleAuth";
 export default {
   mounted() {
     this.storeTokenToLocalStorage();
@@ -10,23 +11,10 @@ export default {
   },
   methods: {
     storeTokenToLocalStorage() {
-      let rawAuthenticationParams = this.$route.hash;
+      const queryParams = this.$route.query;
+      const code = queryParams.code;
 
-      // Remove # character
-      rawAuthenticationParams = rawAuthenticationParams.slice(
-        1,
-        rawAuthenticationParams.length - 1
-      );
-
-      // split params and store in local storage
-      rawAuthenticationParams
-        .split("&")
-        .map((paramPairString) => {
-          return paramPairString.split("=");
-        })
-        .forEach((pair) => {
-          localStorage.setItem(pair[0], pair[1]);
-        });
+      googleAuth.getTokenFromCode(code);
     },
   },
 };
