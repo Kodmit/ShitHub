@@ -52,6 +52,16 @@ const routes = [
           path: '/users/create',
           name: 'users-create',
           component: () => import(/* webpackChunkName: "users-create" */ '@/views/UserCreate.vue')
+        },
+        {
+          path: '/todo',
+          name: 'todo',
+          component: () => import(/* webpackChunkName: "users-create" */ '@/views/ToDo.vue')
+        },
+        {
+          path: '/g-auth/redirect-uri',
+          name: 'g-auth-redirect-uri',
+          component: () => import(/* webpackChunkName: "users-create" */ '@/views/GAuthRedirection.vue')
         }
     ]
   }
