@@ -30,6 +30,12 @@
       </v-autocomplete>
       <p v-if="rowCount !== 0">Lignes à importer : {{ rowCount }}</p>
       <p v-else-if="null != selectedSheet">Aucune ligne à importer</p>
+      <div>
+        <v-switch v-if="rowCount > 0" label="Preview des items" v-model="unfolded"></v-switch>
+        <ul v-show="unfolded">
+          <li v-for="(cell, index) in issueCells" :key="index">{{cell[1]}}</li>
+        </ul>
+      </div>
       <v-btn
         :disabled="rowCount === 0 || null === selectedSheet"
         @click="sendToGithubProject()"
@@ -56,7 +62,8 @@ export default {
       selectedSubsheetName: null,
       orgaProjects: [],
       selectedProject: null,
-      cells: []
+      cells: [],
+      unfolded: false
     };
   },
   methods: {
@@ -127,6 +134,14 @@ export default {
     }, 1000);
     this.refreshViewData();
   },
+  computed: {
+    issueCells() {
+      if (!this.cells) return []
+      
+      if (!this.cells.values.length) return []
+      return this.cells.values.filter(row => row[0] === 'prêt à l\'envoi')
+    }
+  }
 };
 </script>
 
