@@ -21,13 +21,11 @@ const github = {
     );
 
     const newToken = response.data;
-    console.log("new token : ", newToken);
   },
   async getTokenFromCode(code) {
     const response = await axios.post(
       process.env.VUE_APP_BASE_URL + "o-auth/access_token?code=" + code
     );
-    console.log("github response : ", response.data);
 
     const newToken = response.data;
 
@@ -50,7 +48,6 @@ const github = {
   },
   async createAndConvertIssues(rows) {
     const columns = rows[0];
-    console.log(columns);
     let promises = [];
     const issueRows = rows
       .filter((row) => row[0] == "prêt à l'envoi")
@@ -79,12 +76,15 @@ const github = {
   },
   async createGithubIssue(issue) {
     issue.labels = issue.labels ? issue.labels.split(",") : [];
+    console.log(issue)
+    const issueBody = `### Infos générales \n|Infos||\n|-|-|\n|page|${issue.page}|\n|métier|${issue.job}|\n|rôles|${issue.role}|\n---\n\n### Description\n\n${issue['description objectif']}`
     const response = await axios.post(
       `https://api.github.com/repos/Fogo-Capital/maorie-monolith/issues?` +
         localStorage.getItem("github_access_token"),
       {
         title: issue.titre,
         labels: issue.labels,
+        body: issueBody
       },
       {
         headers: {
@@ -108,7 +108,6 @@ const github = {
       }
     );
 
-    console.log(response.data);
   },
   async linkIssueToProject(issueID, projectID, priority) {
     const payload = {
@@ -124,7 +123,6 @@ const github = {
         },
       }
     );
-    console.log(response.data.data.addProjectNextItem.projectNextItem.id)
     this.addPriority(response.data.data.addProjectNextItem.projectNextItem.id, priority)
   },
   async addPriority(itemId, value) {
@@ -149,7 +147,6 @@ const github = {
       }
     );
 
-    console.log(response);
   },
   getToken() {
     const tokenInfos = localStorage.getItem("github_access_token");
