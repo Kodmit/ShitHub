@@ -1,5 +1,8 @@
 import axios from "axios";
-import { relativeTimeRounding } from "moment";
+
+const PROJECT_NODE_ID='PN_kwDOBLNM584AAfjC'
+const PRIORITY_FIELD_ID='MDE2OlByb2plY3ROZXh0RmllbGQxMjA5Nzkx'
+
 const github = {
   isLogged() {
     return (
@@ -32,7 +35,6 @@ const github = {
     localStorage.setItem("github_refresh_token", newToken["refresh_token"]);
   },
   async getProjects() {
-    // project id = PN_kwDOBLNM584AAfjC
     const org = "Fogo-Capital";
     const response = await axios.get(
       `https://api.github.com/orgs/${org}/projects?per_page=20&page=1`,
@@ -91,7 +93,7 @@ const github = {
         },
       }
     );
-    this.linkIssueToProject(response.data.node_id, "PN_kwDOBLNM584AAfjC");
+    this.linkIssueToProject(response.data.node_id, PROJECT_NODE_ID, issue['priorité']);
 
     return response.data.html_url
   },
@@ -108,10 +110,34 @@ const github = {
 
     console.log(response.data);
   },
-  async linkIssueToProject(issueID, projectID) {
+  async linkIssueToProject(issueID, projectID, priority) {
     const payload = {
       query: `mutation {addProjectNextItem(input: {projectId: "${projectID}" contentId: "${issueID}"}) {projectNextItem {id}}}`,
     };
+
+    const response = await axios.post(
+      "https://api.github.com/graphql",
+      payload,
+      {
+        headers: {
+          Authorization: "Bearer " + this.getToken(),
+        },
+      }
+    );
+    console.log(response.data.data.addProjectNextItem.projectNextItem.id)
+    this.addPriority(response.data.data.addProjectNextItem.projectNextItem.id, priority)
+  },
+  async addPriority(itemId, value) {
+    const options = {
+      low: 'd6bf4dde',
+      medium: 'cc2239e7',
+      high: '6ad45e78',
+      urgent: '49f4ff9c'
+    }
+    const optionId = options[value];
+    const payload = {
+      query: `mutation {updateProjectNextItemField(input: {projectId: "${PROJECT_NODE_ID}" itemId: "${itemId}" fieldId: "${PRIORITY_FIELD_ID}" value: "${optionId}"}) {projectNextItem {id}}}`
+    }
 
     const response = await axios.post(
       "https://api.github.com/graphql",
