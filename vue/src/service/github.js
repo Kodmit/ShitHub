@@ -60,22 +60,44 @@ const github = {
       })
       .forEach((issue) => {
         console.log(issue);
-        this.createGithubIssue(issue)
+        this.createGithubIssue(issue);
       });
   },
   async createGithubIssue(issue) {
     await axios.post(
-      `https://api.github.com/repos/Fogo-Capital/maorie-monolith/issues`,
+      `https://api.github.com/repos/Fogo-Capital/maorie-monolith/issues?` +
+        localStorage.getItem("github_access_token"),
       {
         title: issue.titre,
       },
       {
         headers: {
-          Authorization: localStorage.getItem("github_access_token"),
+          Authorization: 'Bearer ' + this.getToken(),
           Accept: "application/vnd.github.v3+json",
         },
       }
     );
+  },
+  async getGithubIssue(project) {
+    const response = await axios.get(
+      `https://api.github.com/repos/${project}/issues`,
+      {
+        headers: {
+          Authorization: "Bearer " + this.getToken(),
+          Accept: "application/vnd.github.v3+json",
+        },
+      }
+    );
+
+    console.log(response.data);
+  },
+  getToken() {
+    const tokenInfos = localStorage.getItem("github_access_token");
+    let token = tokenInfos.split("=")[1];
+    token = token.split("&");
+    token = token[0];
+
+    return token;
   },
 };
 

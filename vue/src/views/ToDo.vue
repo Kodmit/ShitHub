@@ -64,7 +64,7 @@ export default {
       window.location.href = `${process.env.VUE_APP_AUTH_URL}?access_type=offline&scope=https%3A//www.googleapis.com/auth/spreadsheets https%3A//www.googleapis.com/auth/drive.readonly&include_granted_scopes=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=${process.env.VUE_APP_URL}/g-auth/redirect-uri&client_id=${process.env.VUE_APP_CLIENT_ID}`;
     },
     redirectToGithubAuth() {
-      window.location.href = `${process.env.VUE_APP_GITHUB_AUTH_URL}?scope=user:email,admin:org,repo&client_id=${process.env.VUE_APP_GITHUB_CLIENT_ID}`;
+      window.location.href = `${process.env.VUE_APP_GITHUB_AUTH_URL}?scope=user,workflow,codespace,admin:org,repo,notifications&client_id=${process.env.VUE_APP_GITHUB_CLIENT_ID}`;
     },
     refreshViewData() {
       if (false === this.isLogged) return setTimeout(this.refreshViewData, 500);
@@ -117,6 +117,7 @@ export default {
     },
     sendToGithubProject() {
         github.createAndConvertIssues(this.cells.values);
+        //github.getGithubIssue('Fogo-Capital/maorie-monolith')
     },
   },
   mounted() {
