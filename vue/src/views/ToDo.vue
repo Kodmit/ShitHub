@@ -31,9 +31,15 @@
       <p v-if="rowCount !== 0">Lignes à importer : {{ rowCount }}</p>
       <p v-else-if="null != selectedSheet">Aucune ligne à importer</p>
       <div>
-        <v-switch v-if="rowCount > 0" label="Preview des items" v-model="unfolded"></v-switch>
+        <v-switch
+          v-if="rowCount > 0"
+          label="Preview des items"
+          v-model="unfolded"
+        ></v-switch>
         <ul v-show="unfolded">
-          <li v-for="(cell, index) in issueCells" :key="index">{{cell[1]}}</li>
+          <li v-for="(cell, index) in issueCells" :key="index">
+            {{ cell[1] }}
+          </li>
         </ul>
       </div>
       <v-btn
@@ -41,6 +47,20 @@
         @click="sendToGithubProject()"
         >Valider l'importation</v-btn
       >
+      <v-snackbar v-model="snackbar.display">
+        {{ snackbar.text }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="red"
+            text
+            v-bind="attrs"
+            @click="snackbar.display = false"
+          >
+            Fermer
+          </v-btn>
+        </template>
+      </v-snackbar>
     </div>
   </div>
 </template>
@@ -63,7 +83,11 @@ export default {
       orgaProjects: [],
       selectedProject: null,
       cells: [],
-      unfolded: false
+      unfolded: false,
+      snackbar: {
+        display: false,
+        text: "",
+      },
     };
   },
   methods: {
@@ -84,7 +108,6 @@ export default {
 
       if (false === this.isLoggedGithub)
         return setTimeout(this.refreshViewData, 500);
-
     },
     async getSpreadSheets() {
       const accessToken = localStorage.getItem("access_token");
@@ -120,11 +143,18 @@ export default {
       );
 
       this.rowCount =
-        this.cells.values?.filter((row) => row[0] === "prêt à l'envoi").length ?? 0;
+        this.cells.values?.filter((row) => row[0] === "prêt à l'envoi")
+          .length ?? 0;
     },
-    sendToGithubProject() {
-        github.createAndConvertIssues(this.cells.values);
-        //github.getGithubIssue('Fogo-Capital/maorie-monolith')
+    async sendToGithubProject() {
+      await github.createAndConvertIssues(this.cells.values);
+      this.snackbar.text = "Issues créées avec succès !";
+      this.snackbar.display = true;
+
+      sheetService.updateCellsInfos(this.cells, this.selectedSheet, this.selectedSubsheetName);
+      
+      this.selectedSheet = null;
+      this.refreshViewData();
     },
   },
   mounted() {
@@ -136,12 +166,12 @@ export default {
   },
   computed: {
     issueCells() {
-      if (!this.cells) return []
-      
-      if (!this.cells.values.length) return []
-      return this.cells.values.filter(row => row[0] === 'prêt à l\'envoi')
-    }
-  }
+      if (!this.cells) return [];
+
+      if (!this.cells.values.length) return [];
+      return this.cells.values.filter((row) => row[0] === "prêt à l'envoi");
+    },
+  },
 };
 </script>
 

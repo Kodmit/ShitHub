@@ -1,4 +1,5 @@
 import axios from "axios";
+import { relativeTimeRounding } from "moment";
 const github = {
   isLogged() {
     return (
@@ -46,9 +47,9 @@ const github = {
     console.log(response.data);
     return response.data;
   },
-  createAndConvertIssues(rows) {
+  async createAndConvertIssues(rows) {
     const columns = rows[0];
-
+    let promises = [];
     rows
       .filter((row) => row[0] == "prêt à l'envoi")
       .map((row) => {
@@ -59,9 +60,10 @@ const github = {
         return rowObject;
       })
       .forEach((issue) => {
-        console.log(issue);
-        this.createGithubIssue(issue);
+        promises.push(this.createGithubIssue(issue));
       });
+
+    return await Promise.all(promises);
   },
   async createGithubIssue(issue) {
     await axios.post(
@@ -72,7 +74,7 @@ const github = {
       },
       {
         headers: {
-          Authorization: 'Bearer ' + this.getToken(),
+          Authorization: "Bearer " + this.getToken(),
           Accept: "application/vnd.github.v3+json",
         },
       }
