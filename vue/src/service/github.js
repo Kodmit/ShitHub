@@ -38,13 +38,12 @@ const github = {
       `https://api.github.com/orgs/${org}/projects?per_page=20&page=1`,
       {
         headers: {
-          Authorization: localStorage.getItem("github_access_token"),
+          Authorization: "Bearer " + this.getToken(),
           Accept: "application/vnd.github.v3+json",
         },
       }
     );
 
-    console.log(response.data);
     return response.data;
   },
   async createAndConvertIssues(rows) {
@@ -66,11 +65,13 @@ const github = {
     return await Promise.all(promises);
   },
   async createGithubIssue(issue) {
-    await axios.post(
+    issue.labels = issue.labels ? issue.labels.split(",") : [];
+    const response = await axios.post(
       `https://api.github.com/repos/Fogo-Capital/maorie-monolith/issues?` +
         localStorage.getItem("github_access_token"),
       {
         title: issue.titre,
+        labels: issue.labels,
       },
       {
         headers: {
@@ -79,6 +80,7 @@ const github = {
         },
       }
     );
+    this.linkIssueToProject(response.data.node_id, "PN_kwDOBLNM584AAfjC");
   },
   async getGithubIssue(project) {
     const response = await axios.get(
@@ -92,6 +94,23 @@ const github = {
     );
 
     console.log(response.data);
+  },
+  async linkIssueToProject(issueID, projectID) {
+    const payload = {
+      query: `mutation {addProjectNextItem(input: {projectId: "${projectID}" contentId: "${issueID}"}) {projectNextItem {id}}}`,
+    };
+
+    const response = await axios.post(
+      "https://api.github.com/graphql",
+      payload,
+      {
+        headers: {
+          Authorization: "Bearer " + this.getToken(),
+        },
+      }
+    );
+
+    console.log(response);
   },
   getToken() {
     const tokenInfos = localStorage.getItem("github_access_token");

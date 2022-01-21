@@ -42,6 +42,15 @@
           </li>
         </ul>
       </div>
+      <v-autocomplete
+        v-if="0 !== orgaProjects.length"
+        label="Nom du projet"
+        :items="orgaProjects"
+        :item-text="(item) => item.properties.title"
+        :item-value="(item) => item.properties.title"
+        v-model="selectedProject"
+      >
+      </v-autocomplete>
       <v-btn
         :disabled="rowCount === 0 || null === selectedSheet"
         @click="sendToGithubProject()"
@@ -108,6 +117,7 @@ export default {
 
       if (false === this.isLoggedGithub)
         return setTimeout(this.refreshViewData, 500);
+      this.getOrgaProjects();
     },
     async getSpreadSheets() {
       const accessToken = localStorage.getItem("access_token");
@@ -151,10 +161,17 @@ export default {
       this.snackbar.text = "Issues créées avec succès !";
       this.snackbar.display = true;
 
-      sheetService.updateCellsInfos(this.cells, this.selectedSheet, this.selectedSubsheetName);
-      
+      sheetService.updateCellsInfos(
+        this.cells,
+        this.selectedSheet,
+        this.selectedSubsheetName
+      );
+
       this.selectedSheet = null;
       this.refreshViewData();
+    },
+    async getOrgaProjects() {
+      this.orgaProjects = await github.getProjects();
     },
   },
   mounted() {
