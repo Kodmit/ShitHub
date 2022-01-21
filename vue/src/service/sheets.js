@@ -2,7 +2,7 @@ import axios from "axios";
 
 const sheetsService = {
   async getCells(spreadsheetId, sheetName) {
-    const range = "A1:H";
+    const range = "A1:I";
     const response = await axios.get(
       `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!${range}`,
       {
@@ -14,7 +14,7 @@ const sheetsService = {
     return response.data;
   },
   async updateCellsInfos(cells, spreadsheetId, sheetName) {
-    const updatedRange = sheetName + '!A1:H'
+    const updatedRange = sheetName + '!A1:I'
     const valueRange = {
       range: updatedRange,
       majorDimension: cells.majorDimension,

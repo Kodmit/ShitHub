@@ -48,21 +48,32 @@ const github = {
   },
   async createAndConvertIssues(rows) {
     const columns = rows[0];
+    console.log(columns);
     let promises = [];
-    rows
+    const issueRows = rows
       .filter((row) => row[0] == "prêt à l'envoi")
-      .map((row) => {
+      .map((row, rowIndex) => {
         let rowObject = {};
         columns.forEach((col, index) => {
           rowObject[col] = row[index];
         });
+        rowObject["index"] = rowIndex;
         return rowObject;
       })
-      .forEach((issue) => {
-        promises.push(this.createGithubIssue(issue));
+      
+      issueRows.forEach((issue) => {
+        promises.push(
+          this.createGithubIssue(issue).then((issueLink) => {
+            issue.link = issueLink;
+            return issue;
+          })
+        );
       });
 
-    return await Promise.all(promises);
+    await Promise.all(promises);
+    issueRows.forEach((issueRow) => {
+      rows[issueRow.index + 1][rows[issueRow.index].length - 1] = issueRow.link;
+    });
   },
   async createGithubIssue(issue) {
     issue.labels = issue.labels ? issue.labels.split(",") : [];
@@ -81,6 +92,8 @@ const github = {
       }
     );
     this.linkIssueToProject(response.data.node_id, "PN_kwDOBLNM584AAfjC");
+
+    return response.data.html_url
   },
   async getGithubIssue(project) {
     const response = await axios.get(
