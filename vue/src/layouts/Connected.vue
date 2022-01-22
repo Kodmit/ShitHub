@@ -8,6 +8,7 @@
         <v-tab :to="{name: 'home'}">Dashboard</v-tab>
         <v-tab :to="{name: 'users'}">Utilisateurs</v-tab>
         <v-tab :to="{name: 'reports'}">Rapports</v-tab>
+        <v-tab :to="{name: 'todo'}">ToDo</v-tab>
       </v-tabs>
 
       <v-menu offset-y>
